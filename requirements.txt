@@ -1,6 +1,0 @@
-flask
-gunicorn
-requests
-bs4
-genai
-psycopg2-binary
