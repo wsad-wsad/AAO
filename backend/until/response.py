@@ -10,7 +10,6 @@ def response(status_code, data, message):
         "status": status,
         "statusCode": status_code,
         "message": message,
-        # Data dibungkus list sesuai format Express kamu
         "data": [data] if data is not None else [],
         "meta": {"timestamp": datetime.now().isoformat(), "version": "1.0"},
     }
