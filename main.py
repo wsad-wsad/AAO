@@ -1,19 +1,30 @@
 from flask import Flask
 
-from until.aiAgent import AiAgent
-from until.response import response
+from fastapi import FastAPI
+from fastapi.middleware.wsgi import WSGIMiddleware
+from contextlib import asynccontextmanager
 
-app = Flask(__name__)
-# Untuk sekarang pakai flask dulu, kalau udah gede bisa dimigrasiin ke FastAPI
+from aiAgent import AiAgent
+from until.response import response
+import until.type as type
+
+# ini untuk start pas app awal dimulai dan dimatiin
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    yield
+
+flapp = Flask(__name__)
+fast_app = FastAPI(lifespan)
 
 
 # area testing
-@app.route("/api/test")
+
+@flapp.route("/api/test")
 def index():
     return response(200, None, "Hello, World!")
 
 
-@app.route("/api/mikir/<username>")
+@flapp.route("/api/mikir/<username>")
 def mikir(username):
     try:
         ai_agent = AiAgent(username)
@@ -21,6 +32,10 @@ def mikir(username):
     except Exception as e:
         return response(500, str(e), "error")
 
+@fast_app.get("/")
+def index():
+    return {"message": "Hello, World!"}
 
-if __name__ == "__main__":
-    app.run(debug=True)
+
+# flapp pakai middleware WSGI trs di mount ke fast_app
+fast_app.mount("/", WSGIMiddleware(flapp))
