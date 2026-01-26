@@ -1,3 +1,0 @@
-flask
-fastapi[standard-no-fastapi-cloud-cli]
-psycopg[binary, pool]
