@@ -1,8 +1,9 @@
 import json
 import os
-from unittest import result
-
 import dotenv
+
+import asyncio
+import aiofiles
 import requests
 from google import genai
 
@@ -25,13 +26,3 @@ class AiAgent:
             ],
         )
         return response.text
-
-    def scrape_data(self):
-        result = requests.get(
-            f"https://www.reddit.com/user/{self.target}/submitted.json?limit=100"
-        ).json()
-
-        if json.loads(self.mikir_ai()) == True:
-            return result
-        else:
-            return {"investigasi_selesai": True}
