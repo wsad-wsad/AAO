@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.wsgi import WSGIMiddleware
 from flask import Flask
 
-import until.type as type
+# import until.type as type # Aku coment biar gak editor gak berisik warning-warning
 from aiAgent import AiAgent
 from until.response import response
 
@@ -27,11 +27,12 @@ def index_test():
     return response(200, None, "Hello, World!")
 
 
-@flapp.route("/api/mikir/<username>")
-def mikir(username):
+@flapp.route("/api/search/<target>")
+def mikir(target):
     try:
-        ai_agent = AiAgent(username)
-        return response(200, ai_agent.mikir_ai(), "success")
+        ai_agent = AiAgent(target)
+        return response(200, ai_agent.scan_target(), "success")
+
     except Exception as e:
         return response(500, str(e), "error")
 

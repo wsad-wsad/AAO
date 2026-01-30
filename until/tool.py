@@ -36,7 +36,3 @@ def netlas_search(query):
     except Exception as e:
         print(f"Error Netlas: {e}")
         return None
-
-
-netlas_search("google.com")
-google_search("jokowi")

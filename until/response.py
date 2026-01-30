@@ -10,7 +10,7 @@ def response(status_code, data, message):
         "status": status,
         "statusCode": status_code,
         "message": message,
-        "data": [data] if data is not None else [],
+        "data": data,
         "meta": {"timestamp": datetime.now().isoformat(), "version": "1.0"},
     }
 
