@@ -1,3 +1,4 @@
 .env
 until/__pycache__
-gopy
+tests/__pycache__
+__pycache__
