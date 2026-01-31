@@ -4,4 +4,4 @@ Untuk jalanin web appnya jalanin:
 
 Kalau yang pakai fastapi bisa buka /docs untuk api doc
 
-## Fungsi folder tests adalah untuk testing code yg akan ditambahkan yang belum diimplementasikan
+-> Fungsi folder tests adalah untuk testing code yg akan ditambahkan yang belum diimplementasikan

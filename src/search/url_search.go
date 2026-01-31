@@ -1,16 +1,14 @@
-package url_search
+package search
 
-import "C"
 import (
 	"compress/gzip"
 	"compress/zlib"
 	"crypto/tls"
-	"errors"
 	"fmt"
 	"io"
 	"net"
 	"net/http"
-	"strconv"
+	"os"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -43,21 +41,18 @@ var (
 	// count tracks the number of found profiles using atomic operations for thread safety.
 	count atomic.Uint32
 
-	// CurrentTheme holds the active color theme for terminal output.
-	CurrentTheme = DarkTheme
-
 	// file mutext
 	mu sync.Mutex
 )
 
 // Cookie represents an HTTP cookie.
-type Cookie struct {
+type cookie struct {
 	Name  string `json:"name"`  // Cookie name
 	Value string `json:"value"` // Cookie value
 }
 
 // Website represents a website configuration for searching usernames.
-type Website struct {
+type website struct {
 	Name            string   `json:"name"`                   // Website name
 	BaseURL         string   `json:"base_url"`               // Base URL template
 	URLProbe        string   `json:"url_probe,omitempty"`    // Optional probe URL
@@ -67,14 +62,19 @@ type Website struct {
 	ErrorMsg        string   `json:"errorMsg,omitempty"`     // Expected error message for non-existent profiles
 	ErrorCode       int      `json:"errorCode,omitempty"`    // Expected HTTP status code for non-existent profiles
 	ResponseURL     string   `json:"response_url,omitempty"` // Expected response URL for existing profiles
-	Cookies         []Cookie `json:"cookies,omitempty"`      // Cookies to include in requests
+	Cookies         []cookie `json:"cookies,omitempty"`      // Cookies to include in requests
+}
+
+// Data holds the list of websites to search.
+type data struct {
+	Websites []website `json:"websites"` // List of website configurations
 }
 
 // User-Agent header used in HTTP requests to mimic a browser.
 const DefaultUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0"
 
 // UnmarshalJSON fetches and parses the website configuration from a remote JSON file.
-func UnmarshalJSON() (Data, error) {
+func UnmarshalJSON() (data, error) {
 	// GoSearch relies on data.json to determine the websites to search for.
 	// Instead of forcing users to manually download the data.json file, we will fetch the latest version from the repository.
 	// Therefore, we will do the following:
@@ -85,40 +85,44 @@ func UnmarshalJSON() (Data, error) {
 	// Delete existing data.json file
 	err := os.Remove("data.json")
 	if err != nil && !os.IsNotExist(err) {
-		return Data{}, fmt.Errorf("error deleting old data.json: %w", err)
+		return data{}, fmt.Errorf("error deleting old data.json: %w", err)
 	}
 
 	// Fetch JSON from repository
 	url := "https://raw.githubusercontent.com/ibnaleem/gosearch/refs/heads/main/data.json"
 	resp, err := http.Get(url)
 	if err != nil {
-		return Data{}, fmt.Errorf("error downloading data.json: %w", err)
+		return data{}, fmt.Errorf("error downloading data.json: %w", err)
 	}
 	defer resp.Body.Close()
 
 	// Check HTTP status
 	if resp.StatusCode != http.StatusOK {
-		return Data{}, fmt.Errorf("failed to download data.json, status code: %d", resp.StatusCode)
+		return data{}, fmt.Errorf("failed to download data.json, status code: %d", resp.StatusCode)
 	}
 
 	// Read response body
 	jsonData, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return Data{}, fmt.Errorf("error reading downloaded content: %w", err)
+		return data{}, fmt.Errorf("error reading downloaded content: %w", err)
 	}
 
 	// Unmarshal JSON into Data struct
-	var data Data
-	err = sonic.Unmarshal(jsonData, &data)
+	var data_ data
+	err = sonic.Unmarshal(jsonData, &data_)
 	if err != nil {
-		return Data{}, fmt.Errorf("error unmarshalling JSON: %w", err)
+		return data{}, fmt.Errorf("error unmarshalling JSON: %w", err)
 	}
 
-	return data, nil
+	return data_, nil
+}
+
+func buildURL(baseURL, username string) string {
+	return strings.Replace(baseURL, "{}", username, 1)
 }
 
 // MakeRequestWithResponseURL checks for profile existence by comparing the response URL.
-func MakeRequestWithResponseURL(website Website, url string, username string) string {
+func makeRequestWithResponseURL(website website, url string, username string) string {
 	// Some websites always return a 200 for existing and non-existing profiles.
 	// If we do not follow redirects, we could get a 301 for existing profiles and 302 for non-existing profiles.
 	// That is why we have the follow_redirects in our website struct.
@@ -204,9 +208,9 @@ func MakeRequestWithResponseURL(website Website, url string, username string) st
 	}
 
 	// Compare response URL with expected URL
-	formattedResponseURL := BuildURL(website.ResponseURL, username)
+	formattedResponseURL := buildURL(website.ResponseURL, username)
 	if !(res.Request.URL.String() == formattedResponseURL) {
-		url = BuildURL(website.BaseURL, username)
+		url = buildURL(website.BaseURL, username)
 		count.Add(1)
 
 		return url
@@ -216,7 +220,7 @@ func MakeRequestWithResponseURL(website Website, url string, username string) st
 }
 
 // MakeRequestWithErrorCode checks for profile existence by comparing HTTP status codes.
-func MakeRequestWithErrorCode(website Website, url string, username string) string {
+func makeRequestWithErrorCode(website website, url string, username string) string {
 	// Initialize HTTP client
 	client := &http.Client{
 		Timeout: 120 * time.Second,
@@ -294,7 +298,7 @@ func MakeRequestWithErrorCode(website Website, url string, username string) stri
 
 	// Check if status code differs from error code
 	if res.StatusCode != website.ErrorCode {
-		url = BuildURL(website.BaseURL, username)
+		url = buildURL(website.BaseURL, username)
 		count.Add(1)
 
 		return url
@@ -304,7 +308,7 @@ func MakeRequestWithErrorCode(website Website, url string, username string) stri
 }
 
 // MakeRequestWithErrorMsg checks for profile existence by searching for an error message in the response body.
-func MakeRequestWithErrorMsg(website Website, url string, username string) string {
+func makeRequestWithErrorMsg(website website, url string, username string) string {
 	// Initialize HTTP client
 	client := &http.Client{
 		Timeout: 120 * time.Second,
@@ -412,7 +416,7 @@ func MakeRequestWithErrorMsg(website Website, url string, username string) strin
 	// Check for error message
 	bodyStr := string(body)
 	if !strings.Contains(bodyStr, website.ErrorMsg) {
-		url = BuildURL(website.BaseURL, username)
+		url = buildURL(website.BaseURL, username)
 		count.Add(1)
 
 		return url
@@ -422,7 +426,7 @@ func MakeRequestWithErrorMsg(website Website, url string, username string) strin
 }
 
 // MakeRequestWithProfilePresence checks for profile existence by searching for a profile indicator in the response body.
-func MakeRequestWithProfilePresence(website Website, url string, username string) string {
+func makeRequestWithProfilePresence(website website, url string, username string) string {
 	// Some websites have an indicator that a profile exists
 	// but do not have an indicator when a profile does not exist.
 	// If a profile indicator is not found, we can assume that the profile does not exist.
@@ -521,73 +525,57 @@ func MakeRequestWithProfilePresence(website Website, url string, username string
 }
 
 // Search performs concurrent searches across all configured websites.
-func Search(data Data, username string, noFalsePositives bool, wg *sync.WaitGroup, resultChan chan []string) []string {
+func Url_search(data_ data, username string, noFalsePositives bool, wg *sync.WaitGroup, resultChan chan []string) {
+	defer wg.Done()
+
 	var url_results []string
+	var internalWg sync.WaitGroup
+	var mu sync.Mutex
 
 	// Iterate over websites
-	for _, website := range data.Websites {
+	for _, website_ := range data_.Websites {
 		wg.Add(1)
 		// Run search in a goroutine
-		go func(website Website) {
+		go func(website_ website) {
+			defer internalWg.Done()
 			var url string
 			var urlO string
-			defer wg.Done()
 
 			// Use probe URL if specified, otherwise use base URL
-			if website.URLProbe != "" {
-				url = BuildURL(website.URLProbe, username)
+			if website_.URLProbe != "" {
+				url = buildURL(website_.URLProbe, username)
 			} else {
-				url = BuildURL(website.BaseURL, username)
+				url = buildURL(website_.BaseURL, username)
 			}
 
 			// Handle different error types
-			switch website.ErrorType {
+			switch website_.ErrorType {
 			case "status_code":
-				urlO = MakeRequestWithErrorCode(website, url, username)
+				urlO = makeRequestWithErrorCode(website_, url, username)
 			case "errorMsg":
-				urlO = MakeRequestWithErrorMsg(website, url, username)
+				urlO = makeRequestWithErrorMsg(website_, url, username)
 			case "profilePresence":
-				urlO = MakeRequestWithProfilePresence(website, url, username)
+				urlO = makeRequestWithProfilePresence(website_, url, username)
 			case "response_url":
-				urlO = MakeRequestWithResponseURL(website, url, username)
+				urlO = makeRequestWithResponseURL(website_, url, username)
 			default:
 				// Handle unverified profiles if false positives are allowed
 				if !noFalsePositives {
 					urlO = url
-				}
-				else {
-				urlO = ""
+				} else {
+					urlO = ""
 				}
 			}
 
 			if urlO != "" {
+				mu.Lock()
 				url_results = append(url_results, urlO)
+				mu.Unlock()
 			}
-		}(website)
+		}(website_)
 	}
 
+	// wait internal goroutine to finish
+	internalWg.Wait()
 	resultChan <- url_results
-}
-
-func UrlSearch(username string, NoFalsePositives bool) []string {
-	data, err := UnmarshalJSON()
-	if err != nil {
-		fmt.Printf("Error unmarshalling json: %v\n", err)
-		return nil
-	}
-
-	urlResultChan := make(chan []string)
-	var wg sync.WaitGroup
-	go Search(data, username, NoFalsePositives, &wg, urlResultChan)
-	wg.Wait()
-
-	urlResults := <-urlResultChan
-	close(urlResultChan)
-
-	if len(urlResults) > 0 {
-		return urlResults
-	}
-	else {
-		return nil
-	}
 }
