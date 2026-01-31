@@ -31,7 +31,10 @@ def index_test():
 def mikir(target):
     try:
         ai_agent = AiAgent(target)
-        return response(200, ai_agent.scan_target(), "success")
+
+        data_mentah = ai_agent.scan_target()
+        report = ai_agent.generate_report(data_mentah)
+        return response(200, report, "success")
 
     except Exception as e:
         return response(500, str(e), "error")

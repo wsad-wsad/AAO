@@ -6,7 +6,7 @@ import dotenv
 from google import genai
 
 # from until.mikir_ai import mikir_ai
-from until.prompt import prompt
+from until.prompt import prompt, prompt_report
 from until.tool import netlas_search  # google_searc
 
 dotenv.load_dotenv()
@@ -21,7 +21,7 @@ class AiAgent:
 
         response = client.models.generate_content(
             model="gemini-2.5-flash-lite",
-            contents=[prompt, self.target],
+            contents=[prompt.format(target=self.target)],
         )
         print(f"[===INFO===]{response.text}")
         return json.loads(str(response.text))
@@ -31,6 +31,13 @@ class AiAgent:
 
         if "netlas_search" in result["tools"]:
             return netlas_search(self.target)
-        # if "google_search" in result["tools"]:
-        #     return google_search(self.target)
-        # note: googlenya error saat ini pake netlas dulu
+
+    def generate_report(self, data_mentah):
+        client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+
+        response = client.models.generate_content(
+            model="gemini-2.5-flash-lite",
+            contents=[prompt_report.format(data_mentah=data_mentah)],
+        )
+        print(f"[===INFO REPORT===]{response.text}")
+        return json.loads(str(response.text))

@@ -1,19 +1,43 @@
+# File: until/prompt.py
+
 prompt = """
 KAMU ADALAH AI AGENT OSINT
 
-SELALU PATUHI PERATURAN YANG BERLAKU:
-    - SELALU GUNAKAN FORMAT JSON
-    - LANGSUNG KELUARKAN JSON SAJA.
-    - JANGAN GUNAKAN TANDA KUTIP TIGA (backticks) atau formatting markdown.
-    - CONTOH YANG BENAR: {"target": "...", "tools": "..."}
-    - CONTOH YANG SALAH: ```{"target": "...", "tools": "..."}```
-    - FORMAT JSON YG HARUS DIIKUTI:
-        {
-            "target": "isi dengan target username yg diinputkan",
-            "message": "isi ringkasan atau kata-kata ai khas mu",
-            "data": "isi hasil investigasi",
-            "tools": [isi dengan tools yang akan digunakan berdasarkan kebutuhan. untuk saat ini ada netlas_search untuk mencari server iot berdasarkan host atau ip dan google_search untuk menemukan sesuatu lain],
-            "lanjut": "isi dengan data boolean true/false | osint dilanjutkan atau tidak"
-        }
-    LAKUKAN INVESTIGASI TARGET INI SEKARANG!!!.
+ATURAN KERAS:
+1. Respon WAJIB murni format JSON.
+2. DILARANG KERAS menggunakan tanda kutip tiga (backticks) atau format Markdown.
+3. JANGAN tambahkan teks apapun sebelum atau sesudah JSON.
+4. JANGAN gunakan blok kode ```json ... ```.
+
+OUTPUT WAJIB SESUAI FORMAT INI:
+{{
+    "target": "{target}",
+    "message": "isi ringkasan atau kata-kata ai khas mu",
+    "tools": ["netlas_search"],
+    "lanjut": true
+}}
+
+LAKUKAN INVESTIGASI TARGET INI SEKARANG!
+"""
+
+prompt_report = """
+Tugas kamu adalah merapikan data OSINT mentah menjadi JSON yang rapi.
+
+ATURAN KERAS:
+1. Output WAJIB berupa string JSON murni.
+2. DILARANG KERAS menggunakan format Markdown (```json ... ```).
+3. DILARANG menambahkan teks pembuka atau penutup.
+4. Langsung keluarkan JSON-nya saja.
+
+Data Mentah:
+{data_mentah}
+
+FORMAT OUTPUT YANG HARUS DIKELUARKAN:
+{{
+    "target": "target asli",
+    "message": "Berikan ringkasan singkat menarik (misal: IP ini milik perusahaan apa, lokasinya mana)",
+    "data": "ambil poin-poin penting dari data mentah saja",
+    "tools": "netlas_search",
+    "lanjut": false
+}}
 """

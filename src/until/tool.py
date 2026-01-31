@@ -23,7 +23,7 @@ def google_search(query):
 
 def netlas_search(query):
     try:
-        url = "https://app.netlas.io/api/host/"
+        url = f"https://app.netlas.io/api/host/{query}"
 
         headers = {
             "Authorization": f"Bearer {NETLAS_API_KEY}",
