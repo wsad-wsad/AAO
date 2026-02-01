@@ -30,8 +30,10 @@ def index_test():
 @flapp.route("/api/search/<target>")
 def mikir(target):
     try:
-        ai_agent = AiAgent(target)
-        return response(200, ai_agent.scan_target(), "success")
+        agent = AiAgent(target)
+
+        report = agent.run()
+        return response(200, report, "success")
 
     except Exception as e:
         return response(500, str(e), "error")
