@@ -34,3 +34,5 @@ class AiAgent:
         # if "google_search" in result["tools"]:
         #     return google_search(self.target)
         # note: googlenya error saat ini pake netlas dulu
+
+    def gosearch(self):
