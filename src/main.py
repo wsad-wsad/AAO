@@ -19,14 +19,6 @@ flapp = Flask(__name__)
 fast_app = FastAPI()
 
 
-# area testing
-
-
-@flapp.route("/api/test")
-def index_test():
-    return response(200, None, "Hello, World!")
-
-
 @flapp.route("/api/scan/<target>")
 def mikir(target):
     try:
@@ -40,7 +32,7 @@ def mikir(target):
 
 @fast_app.get("/")
 def index():
-    return {"message": "Hello, World!"}
+    return {"server_status": "ok", "message": "Hello, World!"}
 
 
 # flapp pakai middleware WSGI trs di mount ke fast_app
