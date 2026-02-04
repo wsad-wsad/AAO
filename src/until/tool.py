@@ -2,6 +2,7 @@ import os
 
 import dotenv
 import requests
+from langchain.tools import tool
 
 dotenv.load_dotenv()
 
@@ -21,7 +22,11 @@ def google_search(query):
         return None
 
 
+@tool
 def netlas_search(query):
+    """
+    Execute a search query against the Netlas.io database to find internet-connected devices.
+    """
     try:
         url = f"https://app.netlas.io/api/host/{query}"
 
@@ -31,7 +36,7 @@ def netlas_search(query):
         }
         response = requests.get(url, headers=headers)
         data = response.json()
-        print(data)
+        # print(data)
         return data
     except Exception as e:
         print(f"Error Netlas: {e}")
