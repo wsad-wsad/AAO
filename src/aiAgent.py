@@ -4,11 +4,12 @@ import dotenv
 from deep_translator import GoogleTranslator
 from langchain.agents import create_agent
 from langchain.agents.structured_output import ToolStrategy
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_groq import ChatGroq
 from langgraph.checkpoint.memory import InMemorySaver
 
 from until.prompt import SYSTEM_PROMPT
-from until.tool import netlas_search
+from until.tool import google_search, holehe_search, netlas_search
 
 dotenv.load_dotenv()
 
@@ -21,11 +22,17 @@ class Context:
     user_id: str
 
 
-model = ChatGroq(
+model_groq = ChatGroq(
     model="llama-3.3-70b-versatile",
-    temperature=0.8,
+    temperature=1.0,
     max_tokens=8000,
-    max_retries=2,
+)
+
+model_gemini = ChatGoogleGenerativeAI(
+    model="gemini-2.5-flash-lite",
+    temperature=1.0,
+    max_tokens=60000,
+    timeout=None,
 )
 
 
@@ -35,6 +42,7 @@ class ResponseFormat:
     """Response schema for the agent."""
 
     target: str
+    tool_used: str
     summary: str
     detailed_report: str
 
@@ -44,9 +52,9 @@ checkpointer = InMemorySaver()
 
 # Create agent
 agent = create_agent(
-    model=model,
+    model=model_groq,
     system_prompt=SYSTEM_PROMPT,
-    tools=[netlas_search],
+    tools=[netlas_search, google_search, holehe_search],
     context_schema=Context,
     response_format=ToolStrategy(ResponseFormat),
     checkpointer=checkpointer,
@@ -54,7 +62,7 @@ agent = create_agent(
 
 
 # Run agent
-def input(input: str):
+def input_req(input: str):
     print("--- Testing Agent ---")
 
     input_translated = GoogleTranslator(source="auto", target="en").translate(input)

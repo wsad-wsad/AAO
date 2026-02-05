@@ -1,8 +1,6 @@
 from datetime import datetime
 from typing import Any
 
-from flask import jsonify
-
 
 class ResponseApi:
     def __init__(self):
@@ -21,7 +19,7 @@ class ResponseApi:
             "meta": {"timestamp": datetime.now().isoformat(), "version": "1.0"},
         }
 
-        return jsonify(response_body), status_code
+        return response_body, status_code
 
 
 response = ResponseApi()
