@@ -32,7 +32,7 @@ def mikir(target):
 
 @fast_app.get("/")
 def index():
-    return {"server_status": "ok", "message": "Hello, World!"}
+    return response()
 
 
 # flapp pakai middleware WSGI trs di mount ke fast_app

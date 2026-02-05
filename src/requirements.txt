@@ -5,3 +5,4 @@ fastapi[standard-no-fastapi-cloud-cli]
 groq
 langchain
 langchain-groq
+deep-translator

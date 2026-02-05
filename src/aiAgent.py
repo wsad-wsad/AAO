@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 import dotenv
+from deep_translator import GoogleTranslator
 from langchain.agents import create_agent
 from langchain.agents.structured_output import ToolStrategy
 from langchain_groq import ChatGroq
@@ -55,8 +56,10 @@ agent = create_agent(
 # Run agent
 def input(input: str):
     print("--- Testing Agent ---")
+
+    input_translated = GoogleTranslator(source="auto", target="en").translate(input)
     response = agent.invoke(
-        {"messages": [{"role": "user", "content": input}]},
+        {"messages": [{"role": "user", "content": input_translated}]},
         config={"configurable": {"thread_id": "1"}},
         context=Context(user_id="1"),
     )
