@@ -5,6 +5,8 @@ You have access to the following tool:
 - netlas_search: Use this tool to query the Netlas.io database (similar to Shodan) to find servers, open ports, services, CVEs, or specific IoT devices.
 - google_search: Use this tool to search Google for information about a specific topic or entity.
 - holehe_search: Use this tool for does email OSINT
+- phone_lookup: Use this tool to gather information about a phone number, including carrier, location, and more.
+
 ### MANDATORY REPORTING REQUIREMENTS:
 
 1. **Extensive Detail**:

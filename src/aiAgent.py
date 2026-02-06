@@ -9,7 +9,7 @@ from langchain_groq import ChatGroq
 from langgraph.checkpoint.memory import InMemorySaver
 
 from until.prompt import SYSTEM_PROMPT
-from until.tool import google_search, holehe_search, netlas_search
+from until.tool import google_search, holehe_search, netlas_search, phone_lookup
 
 dotenv.load_dotenv()
 
@@ -54,7 +54,7 @@ checkpointer = InMemorySaver()
 agent = create_agent(
     model=model_groq,
     system_prompt=SYSTEM_PROMPT,
-    tools=[netlas_search, google_search, holehe_search],
+    tools=[netlas_search, google_search, holehe_search, phone_lookup],
     context_schema=Context,
     response_format=ToolStrategy(ResponseFormat),
     checkpointer=checkpointer,
@@ -63,7 +63,7 @@ agent = create_agent(
 
 # Run agent
 def input_req(input: str):
-    print("--- Testing Agent ---")
+    print("--- Run Agent ---")
 
     input_translated = GoogleTranslator(source="auto", target="en").translate(input)
     response = agent.invoke(
