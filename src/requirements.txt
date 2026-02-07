@@ -1,4 +1,0 @@
-google-genai
-dotenv
-flask
-fastapi[standard-no-fastapi-cloud-cli]

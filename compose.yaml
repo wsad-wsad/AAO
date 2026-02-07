@@ -1,0 +1,44 @@
+services:
+  main_py:
+    build:
+      context: ./main_py
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - private    
+    volumes:
+      - ./main_py:/app
+    environment:
+      - WATCHFILES_FORCE_POLLING=true
+    depends_on:
+      main_go:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "/app/httpcheck", "http://localhost:8080/api/"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    stop_grace_period: 15s
+    stop_signal: SIGINT
+
+  main_go:
+    build: 
+      context: ./main_go
+      dockerfile: Dockerfile
+    networks:
+      - private
+    healthcheck:
+      test: ["CMD", "/app/httpcheck", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    stop_grace_period: 15s
+    stop_signal: SIGINT
+
+networks:
+  private:
+    driver: bridge
+
