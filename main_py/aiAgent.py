@@ -1,77 +1,75 @@
-import json
-import os
-from typing import Any, Dict, Optional
+from dataclasses import dataclass
 
 import dotenv
-from google import genai
+from deep_translator import GoogleTranslator
+from langchain.agents import create_agent
+from langchain.agents.structured_output import ToolStrategy
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_groq import ChatGroq
+from langgraph.checkpoint.memory import InMemorySaver
 
-from until.prompt import SYSTEM_INSTRUCTION, prompt, prompt_report
-from until.tool import netlas_search  # google_searc
+from until.prompt import SYSTEM_PROMPT
+from until.tool import google_search, holehe_search, netlas_search, phone_lookup
 
 dotenv.load_dotenv()
 
 
-class AiAgent:
-    def __init__(self, target):
-        self.target = target
+# Define context schema
+@dataclass
+class Context:
+    """Custom runtime context schema."""
 
-    def _parse(self, text):
-        return str(text).strip().replace("```json", "").replace("```", "")
+    user_id: str
 
-    def _mikir_ai(self) -> Dict[str, Any]:
-        client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-        response = client.models.generate_content(
-            model="gemini-2.5-flash-lite",
-            contents=[prompt.format(target=self.target)],
-            config={
-                "system_instruction": SYSTEM_INSTRUCTION,
-                "max_output_tokens": 65536,
-            },
-        )
-        print("--- RAW RESPONSE AI (ANALISIS) ---")
-        print(response.text)
-        print("------------------------------------")
-        return json.loads(self._parse(response.text))
+model_groq = ChatGroq(
+    model="llama-3.3-70b-versatile",
+    temperature=1.0,
+    max_tokens=8000,
+)
 
-    def scan(self):
-        result = self._mikir_ai()
+model_gemini = ChatGoogleGenerativeAI(
+    model="gemini-2.5-flash-lite",
+    temperature=1.0,
+    max_tokens=60000,
+    timeout=None,
+)
 
-        if "netlas_search" in result["tools"]:
-            return netlas_search(self.target)
-        else:
-            return None
 
-    def analisis(self, data_mentah: Optional[Any] = None) -> Dict[str, Any]:
-        client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+# Define response format
+@dataclass
+class ResponseFormat:
+    """Response schema for the agent."""
 
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=[prompt_report.format(data_mentah=data_mentah)],
-            config={
-                "max_output_tokens": 65536,
-            },
-        )
-        print("--- RAW RESPONSE AI (ANALISIS) ---")
-        print(response.text)
-        print("------------------------------------")
+    target: str
+    tool_used: str
+    summary: str
+    detailed_report: str
 
-        return json.loads(self._parse(response.text))
 
-    def run(self):
-        tool_name = self._mikir_ai().get("tools", [None])[0]
+# Set up memory
+checkpointer = InMemorySaver()
 
-        while tool_name:
-            if tool_name == "netlas_search":
-                data = netlas_search(self.target)
-            else:
-                data = None
+# Create agent
+agent = create_agent(
+    model=model_groq,
+    system_prompt=SYSTEM_PROMPT,
+    tools=[netlas_search, google_search, holehe_search, phone_lookup],
+    context_schema=Context,
+    response_format=ToolStrategy(ResponseFormat),
+    checkpointer=checkpointer,
+)
 
-            report = self.analisis(data)
 
-            if not report.get("lanjut"):
-                return report
+# Run agent
+def input_req(input: str):
+    print("--- Run Agent ---")
 
-            tool_name = report.get("tools")
+    input_translated = GoogleTranslator(source="auto", target="en").translate(input)
+    response = agent.invoke(
+        {"messages": [{"role": "user", "content": input_translated}]},
+        config={"configurable": {"thread_id": "1"}},
+        context=Context(user_id="1"),
+    )
 
-        return {"message": "Tidak ada tool yang dipilih."}
+    return response["structured_response"]

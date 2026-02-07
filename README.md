@@ -5,3 +5,7 @@ Untuk jalanin web appnya jalanin:
 Kalau yang pakai fastapi bisa buka /docs untuk api doc
 
 -> Fungsi folder tests adalah untuk testing code yg akan ditambahkan yang belum diimplementasikan
+
+## endpoint tersedia:
+  - GET `/` Untuk menampilkan status server
+  - GET `/api/scan/<target/prompt>` Untuk melakukan scan pada target, atau bisa melakukannya pakai prompt

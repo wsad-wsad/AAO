@@ -2,3 +2,13 @@ google-genai
 dotenv
 flask
 fastapi[standard-no-fastapi-cloud-cli]
+groq
+langchain
+langchain-groq
+langchain-google-genai
+langchain-core
+langchain-community
+langgraph
+deep-translator
+holehe
+phonenumbers
