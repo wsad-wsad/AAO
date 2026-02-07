@@ -8,4 +8,4 @@ Kalau yang pakai fastapi bisa buka /docs untuk api doc
 
 ## endpoint tersedia:
   - GET `/` Untuk menampilkan status server
-  - GET `/api/scan/<target/prompt>` Untuk melakukan scan pada target, atau bisa melakukannya pakai prompt
+  - GET `/api/invest/<target/prompt>` Untuk melakukan scan pada target, atau bisa melakukannya pakai prompt

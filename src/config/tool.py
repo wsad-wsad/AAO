@@ -3,10 +3,12 @@ import subprocess
 from typing import Any, Dict
 
 import dotenv
+import nmap3
 import phonenumbers
 import requests
 from langchain.tools import tool
 from phonenumbers import carrier, geocoder, timezone
+from wappalyzer import analyze
 
 dotenv.load_dotenv()
 
@@ -50,13 +52,13 @@ def netlas_search(query: str):
 
 
 @tool
-def holehe_search(input: str):
+def holehe_search(target: str):
     """
     Enter your email to find out if you are registered on any site.
     """
     try:
         result = subprocess.run(
-            ["holehe", input], capture_output=True, text=True, check=True
+            ["holehe", target], capture_output=True, text=True, check=True
         )
         return result.stdout
 
@@ -165,3 +167,19 @@ def phone_lookup(phone_number: str) -> Dict[str, Any]:
             "message": str(e),
             "input": phone_number,
         }
+
+
+@tool
+def wappalyzer(target: str):
+    """
+    Enter a url to perform a tech stack analysis of what the target is using.
+    """
+    try:
+        results = analyze(
+            url=f"https://{target}",
+            scan_type="full",
+        )
+        print(results)
+        return results
+    except Exception as e:
+        return f"error: {str(e)}"
