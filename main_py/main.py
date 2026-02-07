@@ -19,10 +19,7 @@ flapp = Flask(__name__)
 fast_app = FastAPI()
 
 
-# area testing
-
-
-@flapp.route("/api/scan/<target>")
+@flapp.route("/api/invest/<target>")
 def mikir(target):
     try:
         agent = input_req(target)

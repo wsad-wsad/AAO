@@ -1,8 +1,6 @@
-google-genai
 dotenv
 flask
 fastapi[standard-no-fastapi-cloud-cli]
-groq
 langchain
 langchain-groq
 langchain-google-genai
@@ -12,3 +10,5 @@ langgraph
 deep-translator
 holehe
 phonenumbers
+wappalyzer
+python3-nmap
