@@ -5,9 +5,9 @@ from fastapi import FastAPI
 from fastapi.middleware.wsgi import WSGIMiddleware
 from flask import Flask
 
-from aiAgent import input_req
+# from aiAgent import input_req
 from until.response import response
-from until.tool import search_web
+from SU import search_web
 
 
 # ini untuk start pas app awal dimulai dan dimatiin
@@ -19,16 +19,15 @@ flapp = Flask(__name__)
 fast_app = FastAPI()
 
 
-@flapp.route("/api/invest/<target>")
-def mikir(target):
-    try:
-        agent = input_req(target)
+# @flapp.route("/api/invest/<target>")
+# def mikir(target):
+#     try:
+#         agent = input_req(target)
 
-        return response(200, agent, "success")
+#         return response(200, agent, "success")
 
-    except Exception as e:
-        return response(500, str(e), "error")
-
+#     except Exception as e:
+#         return response(500, str(e), "error")
 
 @fast_app.get("/")
 def index():

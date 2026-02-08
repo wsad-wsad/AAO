@@ -9,10 +9,10 @@ services:
       - private    
     volumes:
       - ./main_py:/app
-    secrets:
-      - api_key:/secrets/api_key.txt
     environment:
       - WATCHFILES_FORCE_POLLING=true
+    env_file:
+      - ./secrets/.env
     depends_on:
       main_go:
         condition: service_healthy
@@ -43,7 +43,3 @@ services:
 networks:
   private:
     driver: bridge
-
-secrets:
-  api_key:
-    file: ./secrets/api_key.txt
