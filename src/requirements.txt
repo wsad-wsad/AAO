@@ -11,4 +11,5 @@ deep-translator
 holehe
 phonenumbers
 wappalyzer
-python3-nmap
+langchain-huggingface 
+huggingface_hub

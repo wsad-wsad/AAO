@@ -3,7 +3,6 @@ import subprocess
 from typing import Any, Dict
 
 import dotenv
-import nmap3
 import phonenumbers
 import requests
 from langchain.tools import tool
@@ -19,7 +18,9 @@ NETLAS_API_KEY = os.environ.get("NETLAS_API_KEY")
 @tool
 def google_search(query: str):
     """
-    Execute a search query against the Google Custom Search API.
+    Search Netlas.io for a specific IP address or domain.
+        Args:
+            query: The target IP or domain name (e.g., '1.1.1.1' or 'example.com').
     """
     try:
         url = f"https://www.googleapis.com/customsearch/v1?key={GOOGLE_API_KEY}&cx=30d33e1be3b154e97&q={query}"
