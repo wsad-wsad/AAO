@@ -1,6 +1,6 @@
 import os
 import subprocess
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 import dotenv
 import phonenumbers
@@ -169,6 +169,16 @@ def phone_lookup(phone_number: str) -> Dict[str, Any]:
             "input": phone_number,
         }
 
+def search_web(username: str, noFalsePositives: bool) -> List[str]:
+    try:
+        url = f"http://main_go:8000/search-user"
+        response = requests.get(url, params={"username": username, "noFalsePositives": noFalsePositives})
+
+        return response.json()
+
+    except Exception as e:
+        print(f"Error user search: {e}")
+        return []
 
 @tool
 def wappalyzer(target: str):
