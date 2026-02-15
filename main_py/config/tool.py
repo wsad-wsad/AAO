@@ -23,7 +23,7 @@ def google_search(query: str):
             query: The target IP or domain name (e.g., '1.1.1.1' or 'example.com').
     """
     try:
-        url = f"https://www.googleapis.com/customsearch/v1?key={GOOGLE_API_KEY}&cx=30d33e1be3b154e97&q={query}"
+        url = f"https://www.googleapis.com/customsearch/v1?key={GOOGLE_API_KEY}&cx=54bb47303e8c84f42&q={query}"
         response = requests.get(url)
         data = response.json()
         return data
@@ -169,16 +169,20 @@ def phone_lookup(phone_number: str) -> Dict[str, Any]:
             "input": phone_number,
         }
 
+
 def search_web(username: str, noFalsePositives: bool) -> List[str]:
     try:
         url = f"http://main_go:8000/search-user"
-        response = requests.get(url, params={"username": username, "noFalsePositives": noFalsePositives})
+        response = requests.get(
+            url, params={"username": username, "noFalsePositives": noFalsePositives}
+        )
 
         return response.json()
 
     except Exception as e:
         print(f"Error user search: {e}")
         return []
+
 
 @tool
 def wappalyzer(target: str):
@@ -187,7 +191,7 @@ def wappalyzer(target: str):
     """
     try:
         results = analyze(
-            url=f"https://{target}",
+            url="target",
             scan_type="full",
         )
         print(results)

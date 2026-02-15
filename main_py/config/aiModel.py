@@ -14,6 +14,6 @@ model_groq = ChatGroq(
 model_gemini = ChatGoogleGenerativeAI(
     model="gemini-2.5-flash-lite",
     temperature=0.7,
-    max_tokens=4380,
+    max_tokens=5020,
     api_key=os.getenv("GEMINI_API_KEY"),
 )

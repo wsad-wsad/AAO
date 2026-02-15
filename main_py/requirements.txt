@@ -11,5 +11,3 @@ deep-translator
 holehe
 phonenumbers
 wappalyzer
-langchain-huggingface 
-huggingface_hub

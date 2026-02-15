@@ -1,21 +1,21 @@
-from langchain_groq import ChatGroq
-
-import requests
-from typing import List
 import os
-from dotenv import load_dotenv
+from typing import List
 
-load_dotenv()
-GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+import dotenv
+import requests
+from langchain_google_genai import ChatGoogleGenerativeAI
 
-SU_summary_model = ChatGroq(
-    api_key=GROQ_API_KEY,
-    model="openai/gpt-oss-20b",
-    temperature=0.3
+dotenv.load_dotenv()
+
+SU_summary_model = ChatGoogleGenerativeAI(
+    model="gemini-2.5-flash-lite",
+    temperature=0.7,
+    max_tokens=4380,
+    api_key=os.getenv("GEMINI_API_KEY"),
 )
 
 
-def SUGW(username:str, user_top_details:str):
+def SUGW(username: str, user_top_details: str):
     urls = search_web(username, True)
     for url in urls:
         # raw_user_data = url # sementara
@@ -25,7 +25,9 @@ def SUGW(username:str, user_top_details:str):
 def search_web(username: str, noFalsePositives: bool) -> List[str]:
     try:
         url = f"http://main_go:8000/search-user"
-        response = requests.get(url, params={"username": username, "noFalsePositives": noFalsePositives})
+        response = requests.get(
+            url, params={"username": username, "noFalsePositives": noFalsePositives}
+        )
 
         return response.json()
 
@@ -36,4 +38,3 @@ def search_web(username: str, noFalsePositives: bool) -> List[str]:
     except Exception as e:
         print(f"Error user search: {e}")
         return []
-    
