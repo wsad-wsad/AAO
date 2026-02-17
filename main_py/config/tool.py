@@ -28,7 +28,6 @@ def google_search(query: str):
         url = f"https://www.googleapis.com/customsearch/v1?key={GOOGLE_API_KEY}&cx=54bb47303e8c84f42&q={query}"
         response = requests.get(url)
         data = response.json()
-        print(data)
         return data
     except Exception as e:
         print(f"Error Google: {e}")
