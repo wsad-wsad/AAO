@@ -28,6 +28,7 @@ def google_search(query: str):
         url = f"https://www.googleapis.com/customsearch/v1?key={GOOGLE_API_KEY}&cx=54bb47303e8c84f42&q={query}"
         response = requests.get(url)
         data = response.json()
+        print(data)
         return data
     except Exception as e:
         print(f"Error Google: {e}")
@@ -202,7 +203,7 @@ def wappalyzer(target: str):
         return f"error: {str(e)}"
 
 
-# PDDIKTI
+@tool
 def pddikti_all(input: str):
     """Conduct searches in all categories (students, lecturers, universities, study programs) based on keywords."""
     try:
@@ -214,6 +215,7 @@ def pddikti_all(input: str):
         return f"error: {str(e)}"
 
 
+@tool
 def search_mhs_by_name_or_nim(name_or_nim: str):
     """Search for students by name or student ID."""
     try:
