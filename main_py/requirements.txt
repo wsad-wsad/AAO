@@ -11,3 +11,5 @@ deep-translator
 holehe
 phonenumbers
 wappalyzer
+uvicorn
+pddiktipy

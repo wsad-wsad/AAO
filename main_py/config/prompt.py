@@ -7,6 +7,8 @@ You have access to the following tool:
 - holehe_search: Use this tool for email OSINT to find registered accounts.
 - phone_lookup: Use this tool to gather information about a phone number, including carrier, location, and more.
 - wappalyzer: Enter a url to perform a tech stack analysis of what the target is using.
+- pddikti_all: Conduct searches in all categories (students, lecturers, universities, study programs) based on keywords.
+- search_mhs_by_name_or_nim: Search for students by name or student ID.
 
 ### OPERATIONAL RULES (STRICTLY MANDATORY):
 

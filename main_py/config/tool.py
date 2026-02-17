@@ -1,11 +1,13 @@
 import os
 import subprocess
+from re import search
 from typing import Any, Dict, List
 
 import dotenv
 import phonenumbers
 import requests
 from langchain.tools import tool
+from pddiktipy import api
 from phonenumbers import carrier, geocoder, timezone
 from wappalyzer import analyze
 
@@ -198,3 +200,25 @@ def wappalyzer(target: str):
         return results
     except Exception as e:
         return f"error: {str(e)}"
+
+
+# PDDIKTI
+def pddikti_all(input: str):
+    """Conduct searches in all categories (students, lecturers, universities, study programs) based on keywords."""
+    try:
+        with api() as client:
+            hasil = client.search_all(input)
+            print(hasil)
+            return hasil
+    except Exception as e:
+        return f"error: {str(e)}"
+
+
+def search_mhs_by_name_or_nim(name_or_nim: str):
+    """Search for students by name or student ID."""
+    try:
+        with api() as client:
+            mahasiswa = client.search_mahasiswa("Ilham Riski Wibowo")
+            return mahasiswa
+    except Exception as e:
+        print(f"Error searching mahasiswa: {e}")
