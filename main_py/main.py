@@ -1,13 +1,16 @@
 # from contextlib import asynccontextmanager
 import requests
 
+# from time import sleep
 from fastapi import FastAPI
 from fastapi.middleware.wsgi import WSGIMiddleware
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 from flask import Flask
 
-# from aiAgent import input_req
 from until.response import response
 from SU import SUGW, search_web
+from aiAgent import input_req
 
 
 # # ini untuk start pas app awal dimulai dan dimatiin
@@ -18,20 +21,31 @@ from SU import SUGW, search_web
 flapp = Flask(__name__)
 fast_app = FastAPI()
 
+fast_app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:8000"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# @flapp.route("/api/invest/<target>")
-# def mikir(target):
-#     try:
-#         agent = input_req(target)
+with open("templates/index.html", "r") as f:
+    home_html = f.read()
 
-#         return response(200, agent, "success")
 
-#     except Exception as e:
-#         return response(500, str(e), "error")
+@flapp.route("/api/invest/<target>")
+def mikir(target):
+    try:
+        agent = input_req(target)
+
+        return response(200, agent, "success")
+
+    except Exception as e:
+        return response(500, str(e), "error")
+
 
 @fast_app.get("/")
-def index():
-    return {"message": "Hello, World!"}
+async def home():
+    return HTMLResponse(home_html)
 
 @fast_app.get("/api/SUGW/{target}")
 def search_user(target: str):

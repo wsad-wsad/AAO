@@ -1,11 +1,8 @@
-from dataclasses import dataclass
+from pydantic import BaseModel, Field
 
 
-@dataclass
-class ResponseFormat:
-    """Response schema for the agent."""
-
-    target: str
-    tool_used: str
-    summary: str
-    detailed_report: str
+class ResponseFormat(BaseModel):
+    target: str = Field(description="The target of the investigation")
+    tool_used: str = Field(description="The name of the tool used")
+    summary: str = Field(description="Brief summary of the findings")
+    detailed_report: str = Field(description="The long-form investigative report")

@@ -65,7 +65,7 @@ def clean_markdown(md: str) -> str:
 
 async def urls_search(urls: List[str]) -> List[str]:
     async with AsyncWebCrawler() as crawler:
-        datas = await crawler.arun_many(urls[2:4])
+        datas = await crawler.arun_many(urls)
 
         result = []
         for data in datas:
@@ -74,6 +74,8 @@ async def urls_search(urls: List[str]) -> List[str]:
     
     return result
 
+# func untuk ngejalanin gosearch dengan http req
+# memberikan list[url: str]
 def search_web(username: str, noFalsePositives: bool) -> List[str]:
     url = f"http://localhost:8000/search-user"
     response = requests.get(url, params={"username": username, "noFalsePositives": noFalsePositives}, headers={"Content-Type": "application/json"})

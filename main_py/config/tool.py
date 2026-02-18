@@ -1,12 +1,13 @@
 import os
 import subprocess
+from re import search
 from typing import Any, Dict, List
 
 import dotenv
-import nmap3
 import phonenumbers
 import requests
 from langchain.tools import tool
+from pddiktipy import api
 from phonenumbers import carrier, geocoder, timezone
 from wappalyzer import analyze
 
@@ -19,10 +20,12 @@ NETLAS_API_KEY = os.environ.get("NETLAS_API_KEY")
 @tool
 def google_search(query: str):
     """
-    Execute a search query against the Google Custom Search API.
+    Search Netlas.io for a specific IP address or domain.
+        Args:
+            query: The target IP or domain name (e.g., '1.1.1.1' or 'example.com').
     """
     try:
-        url = f"https://www.googleapis.com/customsearch/v1?key={GOOGLE_API_KEY}&cx=30d33e1be3b154e97&q={query}"
+        url = f"https://www.googleapis.com/customsearch/v1?key={GOOGLE_API_KEY}&cx=54bb47303e8c84f42&q={query}"
         response = requests.get(url)
         data = response.json()
         return data
@@ -168,16 +171,6 @@ def phone_lookup(phone_number: str) -> Dict[str, Any]:
             "input": phone_number,
         }
 
-def search_web(username: str, noFalsePositives: bool) -> List[str]:
-    try:
-        url = f"http://main_go:8000/search-user"
-        response = requests.get(url, params={"username": username, "noFalsePositives": noFalsePositives})
-
-        return response.json()
-
-    except Exception as e:
-        print(f"Error user search: {e}")
-        return []
 
 @tool
 def wappalyzer(target: str):
@@ -186,10 +179,33 @@ def wappalyzer(target: str):
     """
     try:
         results = analyze(
-            url=f"https://{target}",
+            url="target",
             scan_type="full",
         )
         print(results)
         return results
     except Exception as e:
         return f"error: {str(e)}"
+
+
+@tool
+def pddikti_all(input: str):
+    """Conduct searches in all categories (students, lecturers, universities, study programs) based on keywords."""
+    try:
+        with api() as client:
+            hasil = client.search_all(input)
+            print(hasil)
+            return hasil
+    except Exception as e:
+        return f"error: {str(e)}"
+
+
+@tool
+def search_mhs_by_name_or_nim(name_or_nim: str):
+    """Search for students by name or student ID."""
+    try:
+        with api() as client:
+            mahasiswa = client.search_mahasiswa("Ilham Riski Wibowo")
+            return mahasiswa
+    except Exception as e:
+        print(f"Error searching mahasiswa: {e}")

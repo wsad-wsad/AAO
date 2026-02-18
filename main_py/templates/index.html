@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>OSINT Agent Terminal | Pro Edition</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;600&display=swap"
+            rel="stylesheet"
+        />
+        <script src="https://unpkg.com/feather-icons"></script>
+
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ["Inter", "sans-serif"],
+                            mono: ["Fira Code", "monospace"],
+                        },
+                        colors: {
+                            brand: {
+                                bg: "#020617",
+                                surface: "#0f172a",
+                                border: "#1e293b",
+                                accent: "#06b6d4",
+                                danger: "#ef4444",
+                                success: "#10b981",
+                            },
+                        },
+                    },
+                },
+            };
+        </script>
+
+        <style>
+            body {
+                background-color: #020617;
+            }
+            .custom-scroll::-webkit-scrollbar {
+                width: 5px;
+            }
+            .custom-scroll::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            .custom-scroll::-webkit-scrollbar-thumb {
+                background: #1e293b;
+                border-radius: 10px;
+            }
+
+            .loading-shimmer {
+                background: linear-gradient(
+                    90deg,
+                    #0f172a 25%,
+                    #1e293b 50%,
+                    #0f172a 75%
+                );
+                background-size: 200% 100%;
+                animation: shimmer 1.5s infinite;
+            }
+            @keyframes shimmer {
+                0% {
+                    background-position: 200% 0;
+                }
+                100% {
+                    background-position: -200% 0;
+                }
+            }
+
+            .dot-pulse {
+                animation: pulse 1.5s infinite ease-in-out;
+            }
+            @keyframes pulse {
+                0%,
+                100% {
+                    opacity: 0.3;
+                    transform: scale(0.8);
+                }
+                50% {
+                    opacity: 1;
+                    transform: scale(1.1);
+                }
+            }
+        </style>
+    </head>
+    <body
+        class="text-slate-300 font-sans h-screen flex flex-col overflow-hidden"
+    >
+        <nav
+            class="bg-brand-surface/80 backdrop-blur-md border-b border-brand-border p-4 flex items-center justify-between shadow-2xl z-20"
+        >
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-10 h-10 bg-brand-accent/10 border border-brand-accent/30 rounded-xl flex items-center justify-center text-brand-accent"
+                >
+                    <i data-feather="activity"></i>
+                </div>
+                <div>
+                    <h1 class="text-slate-100 font-bold tracking-tight">
+                        OSINT_AGENT_v1.2
+                    </h1>
+                    <div class="flex items-center gap-2">
+                        <span class="relative flex h-2 w-2">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"
+                            ></span>
+                            <span
+                                class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"
+                            ></span>
+                        </span>
+                        <span
+                            class="text-[10px] font-mono uppercase tracking-widest text-emerald-500/80"
+                            >Translation Module Ready</span
+                        >
+                    </div>
+                </div>
+            </div>
+            <div
+                class="text-xs font-mono text-slate-500 flex items-center gap-4"
+            >
+                <span class="hidden md:inline"
+                    >API_STATUS:
+                    <span class="text-brand-success">OK</span></span
+                >
+                <span
+                    class="bg-slate-800 px-2 py-1 rounded border border-brand-border"
+                    >EN
+                    <i data-feather="repeat" class="inline w-3 h-3"></i>
+                    ID</span
+                >
+            </div>
+        </nav>
+
+        <main
+            id="chat-feed"
+            class="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 custom-scroll"
+        >
+            <div class="max-w-4xl mx-auto flex gap-4">
+                <div
+                    class="w-8 h-8 rounded bg-brand-surface border border-brand-border flex items-center justify-center shrink-0"
+                >
+                    <i
+                        data-feather="terminal"
+                        class="w-4 h-4 text-brand-accent"
+                    ></i>
+                </div>
+                <div
+                    class="bg-brand-surface border border-brand-border p-4 rounded-2xl rounded-tl-none text-sm max-w-prose leading-relaxed shadow-lg"
+                >
+                    Sistem aktif. Masukkan target investigasi.
+                </div>
+            </div>
+        </main>
+
+        <footer
+            class="p-4 bg-gradient-to-t from-brand-bg via-brand-bg to-transparent"
+        >
+            <div class="max-w-4xl mx-auto">
+                <form id="investigation-form" class="relative">
+                    <input
+                        type="text"
+                        id="user-input"
+                        autocomplete="off"
+                        class="w-full bg-brand-surface border border-brand-border rounded-2xl pl-6 pr-16 py-4 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-accent transition-all shadow-2xl"
+                        placeholder="Contoh: indonesia.go.id"
+                    />
+                    <button
+                        type="submit"
+                        id="submit-btn"
+                        class="absolute right-2 top-2 bottom-2 px-4 bg-brand-accent hover:bg-cyan-500 text-brand-bg rounded-xl font-bold transition-all flex items-center justify-center"
+                    >
+                        <i data-feather="search"></i>
+                    </button>
+                </form>
+            </div>
+        </footer>
+
+        <script>
+            feather.replace();
+
+            const form = document.getElementById("investigation-form");
+            const input = document.getElementById("user-input");
+            const feed = document.getElementById("chat-feed");
+            const submitBtn = document.getElementById("submit-btn");
+
+            const escape = (str) => {
+                const div = document.createElement("div");
+                div.textContent = str;
+                return div.innerHTML;
+            };
+
+            const scrollToBottom = () => {
+                feed.scrollTo({ top: feed.scrollHeight, behavior: "smooth" });
+            };
+
+            // UI Component: Loading State
+            const showLoading = () => {
+                const div = document.createElement("div");
+                div.className = "max-w-4xl mx-auto flex gap-4";
+                div.innerHTML = `
+                <div class="w-8 h-8 rounded bg-brand-surface border border-brand-border flex items-center justify-center shrink-0">
+                    <i data-feather="cpu" class="w-4 h-4 text-brand-accent"></i>
+                </div>
+                <div class="bg-brand-surface border border-brand-border p-4 rounded-2xl rounded-tl-none flex items-center gap-3">
+                    <span class="text-xs font-mono text-brand-accent animate-pulse uppercase tracking-widest">Gathering Intelligence</span>
+                    <div class="flex gap-1">
+                        <div class="w-1.5 h-1.5 bg-brand-accent rounded-full dot-pulse"></div>
+                        <div class="w-1.5 h-1.5 bg-brand-accent rounded-full dot-pulse" style="animation-delay: 0.2s"></div>
+                    </div>
+                </div>
+            `;
+                feed.appendChild(div);
+                feather.replace();
+                scrollToBottom();
+                return div;
+            };
+
+            // Core Translation Function
+            const translateText = async (text) => {
+                try {
+                    const res = await fetch(
+                        `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|id`,
+                    );
+                    const data = await res.json();
+                    return data.responseData.translatedText || text;
+                } catch (err) {
+                    console.error("Translation Error:", err);
+                    return text;
+                }
+            };
+
+            // Action: Handle Translation on Card
+            const handleTranslate = async (
+                btn,
+                summaryId,
+                reportId,
+                originalData,
+            ) => {
+                const summaryEl = document.getElementById(summaryId);
+                const reportEl = document.getElementById(reportId);
+
+                btn.disabled = true;
+                btn.innerHTML = `<i data-feather="loader" class="w-3 h-3 animate-spin"></i> Translating...`;
+                feather.replace();
+
+                summaryEl.classList.add("opacity-40");
+                reportEl.classList.add("opacity-40");
+
+                const [transSummary, transReport] = await Promise.all([
+                    translateText(originalData.summary),
+                    translateText(originalData.detailed_report),
+                ]);
+
+                summaryEl.textContent = transSummary;
+                reportEl.textContent = transReport;
+
+                summaryEl.classList.remove("opacity-40");
+                reportEl.classList.remove("opacity-40");
+
+                btn.innerHTML = `<i data-feather="check" class="w-3 h-3 text-emerald-400"></i> Translated to ID`;
+                btn.classList.add(
+                    "text-emerald-400",
+                    "border-emerald-500/30",
+                    "bg-emerald-500/10",
+                );
+                feather.replace();
+            };
+
+            const renderReport = (data) => {
+                const cardId =
+                    "card-" + Math.random().toString(36).substr(2, 9);
+                const summaryId = `summary-${cardId}`;
+                const reportId = `report-${cardId}`;
+
+                const div = document.createElement("div");
+                div.className = "max-w-4xl mx-auto flex gap-4";
+                div.innerHTML = `
+                <div class="w-8 h-8 rounded bg-brand-surface border border-brand-border flex items-center justify-center shrink-0">
+                    <i data-feather="shield" class="w-4 h-4 text-brand-accent"></i>
+                </div>
+                <div class="w-full bg-brand-surface border border-brand-border rounded-2xl overflow-hidden shadow-2xl">
+                    <div class="bg-slate-800/50 p-3 px-4 border-b border-brand-border flex justify-between items-center flex-wrap gap-2">
+                        <span class="text-xs font-mono font-bold text-slate-400">TARGET: ${escape(data.target)}</span>
+                        <div class="flex items-center gap-2">
+                             <button id="btn-${cardId}" class="flex items-center gap-1.5 text-[10px] bg-brand-border hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-lg border border-brand-border transition-all uppercase font-bold">
+                                <i data-feather="globe" class="w-3 h-3"></i> Translate to ID
+                            </button>
+                            <span class="text-[10px] bg-brand-accent/10 text-brand-accent px-2 py-1.5 rounded-lg border border-brand-accent/20 uppercase font-bold">${escape(data.tool_used)}</span>
+                        </div>
+                    </div>
+                    <div class="p-5 space-y-6">
+                        <div>
+                            <h4 class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2">Executive Summary</h4>
+                            <p id="${summaryId}" class="text-sm text-slate-200 leading-relaxed transition-opacity duration-500">${escape(data.summary)}</p>
+                        </div>
+                        <div class="pt-4 border-t border-brand-border/50">
+                            <h4 class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2">Detailed Report</h4>
+                            <div class="bg-brand-bg rounded-xl p-4 border border-brand-border/50">
+                                <pre id="${reportId}" class="font-mono text-xs text-brand-accent/90 leading-relaxed whitespace-pre-wrap transition-opacity duration-500">${escape(data.detailed_report)}</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+                feed.appendChild(div);
+                feather.replace();
+                scrollToBottom();
+
+                // Bind translation event
+                document
+                    .getElementById(`btn-${cardId}`)
+                    .addEventListener("click", function () {
+                        handleTranslate(this, summaryId, reportId, data);
+                    });
+            };
+
+            const renderUserMessage = (msg) => {
+                const div = document.createElement("div");
+                div.className = "max-w-4xl mx-auto flex gap-4 flex-row-reverse";
+                div.innerHTML = `
+                <div class="w-8 h-8 rounded bg-slate-800 border border-brand-border flex items-center justify-center shrink-0">
+                    <i data-feather="user" class="w-4 h-4 text-slate-400"></i>
+                </div>
+                <div class="bg-brand-accent/10 border border-brand-accent/20 p-4 rounded-2xl rounded-tr-none text-sm text-slate-100 shadow-sm">
+                    ${escape(msg)}
+                </div>
+            `;
+                feed.appendChild(div);
+                feather.replace();
+                scrollToBottom();
+            };
+
+            const renderError = (msg) => {
+                const div = document.createElement("div");
+                div.className = "max-w-4xl mx-auto flex gap-4";
+                div.innerHTML = `
+                <div class="w-8 h-8 rounded bg-brand-danger/20 border border-brand-danger/30 flex items-center justify-center shrink-0">
+                    <i data-feather="alert-circle" class="w-4 h-4 text-brand-danger"></i>
+                </div>
+                <div class="bg-brand-danger/5 border border-brand-danger/10 p-4 rounded-2xl rounded-tl-none text-brand-danger text-sm font-mono">
+                    [SYSTEM_ERROR]: ${escape(msg)}
+                </div>
+            `;
+                feed.appendChild(div);
+                feather.replace();
+                scrollToBottom();
+            };
+
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const val = input.value.trim();
+                if (!val) return;
+
+                renderUserMessage(val);
+                input.value = "";
+                input.disabled = true;
+                submitBtn.disabled = true;
+
+                const loadingFrame = showLoading();
+
+                try {
+                    const response = await fetch(
+                        `http://localhost:8000/api/invest/${encodeURIComponent(val)}`,
+                    );
+                    loadingFrame.remove();
+
+                    if (!response.ok)
+                        throw new Error(
+                            `Status ${response.status}: Gagal menghubungi server investigasi.`,
+                        );
+
+                    const result = await response.json();
+
+                    if (result.status === "success" && result.data) {
+                        renderReport(result.data);
+                    } else {
+                        throw new Error(
+                            result.message || "Data investigasi tidak valid.",
+                        );
+                    }
+                } catch (err) {
+                    if (loadingFrame) loadingFrame.remove();
+                    renderError(
+                        err.message === "Failed to fetch"
+                            ? "Koneksi API terputus. Pastikan backend aktif."
+                            : err.message,
+                    );
+                } finally {
+                    input.disabled = false;
+                    submitBtn.disabled = false;
+                    input.focus();
+                }
+            });
+        </script>
+    </body>
+</html>

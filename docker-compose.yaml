@@ -1,0 +1,17 @@
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./main_py:/app/main_py
+    env_file:
+      - ./secrets/.env
+    healthcheck:
+      test: ["CMD", "/app/httpcheck", "http://localhost:8080/api/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

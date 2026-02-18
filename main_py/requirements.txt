@@ -13,5 +13,6 @@ deep-translator
 holehe
 phonenumbers
 wappalyzer
-python3-nmap
+uvicorn
+pddiktipy
 crawl4ai
