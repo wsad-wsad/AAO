@@ -4,9 +4,6 @@ fastapi[standard-no-fastapi-cloud-cli]
 langchain
 langchain-groq
 langchain-google-genai
-langchain-core
-langchain-community
-langgraph
 deep-translator
 holehe
 phonenumbers

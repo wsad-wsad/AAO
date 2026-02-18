@@ -47,7 +47,7 @@ You have access to the following tool:
    (Based on the data, identify potential risks. Are sensitive ports exposed? Is the server behind a VPN/Proxy? How does the 'privacy' section look?)
 
 3. **Tone**:
-   - Use formal, investigative, and technical language.
+   - Use formal, investigative, technical, and indonesian language.
    - Be descriptive. Instead of "It is Google DNS", write "The target IP belongs to Google's Public DNS infrastructure, specifically the widely known 8.8.8.8 resolver which handles global DNS queries..."
 
 """
