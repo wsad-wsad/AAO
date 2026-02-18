@@ -1,5 +1,5 @@
-from contextlib import asynccontextmanager
-from time import sleep
+# from contextlib import asynccontextmanager
+import requests
 
 from fastapi import FastAPI
 from fastapi.middleware.wsgi import WSGIMiddleware
@@ -7,13 +7,13 @@ from flask import Flask
 
 # from aiAgent import input_req
 from until.response import response
-from SU import search_web
+from SU import SUGW, search_web
 
 
-# ini untuk start pas app awal dimulai dan dimatiin
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    yield
+# # ini untuk start pas app awal dimulai dan dimatiin
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     yield
 
 flapp = Flask(__name__)
 fast_app = FastAPI()
@@ -33,9 +33,18 @@ fast_app = FastAPI()
 def index():
     return {"message": "Hello, World!"}
 
-@fast_app.get("/api/search-user/{target}")
-def search(target: str):
-    return search_web(target, True)
+@fast_app.get("/api/SUGW/{target}")
+def search_user(target: str):
+    return SUGW(target)
+
+@fast_app.get("/api/search-web/{target}")
+def search_web_(target: str):
+    return {"result": search_web(target, True)}
+
+@fast_app.get("/api/main_go")
+def main_go():
+    return {"msg" : requests.get("http://localhost:8000/")}
+
 
 @fast_app.get("/api/")
 def health():

@@ -1,25 +1,28 @@
-FROM go:1.24.4-alpine AS builder
+FROM golang:1.24.4 AS builder
 
 WORKDIR /app
 COPY main_go/go.mod main_go/go.sum ./
 RUN go mod download
 
 COPY main_go/ .
-RUN go build -o go_main
+RUN go build -o main_go
 
 
-FROM python:3.13-alpine
+FROM python:3.13-slim
 
 # Copy dependency microcheck
 COPY --from=ghcr.io/tarampampam/microcheck:1 /bin/httpcheck /app/httpcheck
 
-COPY --from=builder /app/go_main /app/go_main
+COPY --from=builder /app/main_go /app/main_go
 
-WORKDIR /app
+WORKDIR /app/main_py
 COPY main_py/requirements.txt .
-RUN pip install -r requirements.txt --no-cache-dir
+RUN pip install -r requirements.txt --no-cache-dir \
+    && playwright install \
+    && playwright install-deps
 
+COPY start.sh /app/start.sh
 COPY main_py/ .
 EXPOSE 8080
-ENTRYPOINT [ "/app/go_main" ]
-CMD ["uvicorn", "main:fast_app", "--host", "0.0.0.0", "--port", "8080", "--reload"]
+RUN chmod +x /app/start.sh
+ENTRYPOINT [ "/app/start.sh" ]

@@ -1,0 +1,7 @@
+package main
+
+func CleanMarkdown(usernames []string) ([]string, error) {
+	for user := range usernames {
+
+	}
+}

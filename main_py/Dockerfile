@@ -1,4 +1,4 @@
-FROM python:3.13-alpine
+FROM python:3.13.7-slim
 
 # Copy dependency microcheck
 COPY --from=ghcr.io/tarampampam/microcheck:1 /bin/httpcheck /app/httpcheck
@@ -6,7 +6,9 @@ COPY --from=ghcr.io/tarampampam/microcheck:1 /bin/httpcheck /app/httpcheck
 WORKDIR /app
 
 COPY requirements.txt .
-RUN pip install -r requirements.txt --no-cache-dir
+RUN pip install -r requirements.txt --no-cache-dir \
+    && playwright install \
+    && playwright install-deps
 
 COPY . .
 EXPOSE 8080

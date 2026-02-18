@@ -6,7 +6,7 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - private    
+      - private
     volumes:
       - ./main_py:/app
     environment:
@@ -29,6 +29,8 @@ services:
     build: 
       context: ./main_go
       dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
     networks:
       - private
     healthcheck:
