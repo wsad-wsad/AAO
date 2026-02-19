@@ -2,11 +2,15 @@ Kalau yang pakai fastapi bisa buka /docs untuk api doc
 
 -> Fungsi folder tests adalah untuk testing code yg akan ditambahkan yang belum diimplementasikan
 
-## Cara ngejalanin
+## Cara menjalankan
+### Development
 1. download docker/podman
 2. ke folder AAO
-3. jalanin `docker compose up --build` 
+3. jalanin `docker compose -f docker-compose-dev.yaml up --build` 
 4. cara matiin tinggal `docker compose down` atau ctrl + c
+### Production
+perbedaannya di no 3 menjadi:
+3. jalanin `docker compose up --build`
 
 Catatan:
 - web tersedia di `http://localhost:8080/`, bila mau ke endpoint docs ada di `/docs`
@@ -31,7 +35,7 @@ kalau hanya memakai alur simple seperti:
 2. AI (dengan scraper)
 hasilnya kurang memuaskan dan tidak efesien, tetapi bila memakai metode yang ada di flowchart dapat memberikan hasil yang sangat efesien mencapai 80% token effeciency untuk ke summary ai, tetapi masih dalam tahap perkembangan, baru sampai markdown cleaner. serta dapat mengetahui relasi kompleks dengan effesien menggunakan embed model dan vektor db.
 
-### response
+## response
 
 dari pada response api gak teratur pakai structure response kayak gini:
 
