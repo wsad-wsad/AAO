@@ -20,14 +20,13 @@ NETLAS_API_KEY = os.environ.get("NETLAS_API_KEY")
 @tool
 def google_search(query: str):
     """
-    Search Netlas.io for a specific IP address or domain.
-        Args:
-            query: The target IP or domain name (e.g., '1.1.1.1' or 'example.com').
+    Google Search is a web-based search engine that allows users to search for information on the internet. You can use it to find information about a specific topic, person, or website. For search specific information, you can use Google dork techniques to refine your search results.
     """
     try:
         url = f"https://www.googleapis.com/customsearch/v1?key={GOOGLE_API_KEY}&cx=54bb47303e8c84f42&q={query}"
         response = requests.get(url)
         data = response.json()
+        print("tool google_search running")
         return data
     except Exception as e:
         print(f"Error Google: {e}")
@@ -37,7 +36,7 @@ def google_search(query: str):
 @tool
 def netlas_search(query: str):
     """
-    Execute a search query against the Netlas.io database to find internet-connected devices.
+    Netlas is an open-source intelligence (OSINT) and comprehensive internet scanner used to find, investigate, and monitor online assets, such as IP addresses, domains, SSL certificates, and open ports.
     """
     try:
         url = f"https://app.netlas.io/api/host/{query}"
@@ -48,6 +47,7 @@ def netlas_search(query: str):
         }
         response = requests.get(url, headers=headers)
         data = response.json()
+        print("tool netlas_search running")
         return data
     except Exception as e:
         print(f"Error Netlas: {e}")
@@ -63,6 +63,7 @@ def holehe_search(target: str):
         result = subprocess.run(
             ["holehe", target], capture_output=True, text=True, check=True
         )
+        print("tool holehe_search running")
         return result.stdout
 
     except subprocess.CalledProcessError as e:
@@ -160,7 +161,7 @@ def phone_lookup(phone_number: str) -> Dict[str, Any]:
 
         if not is_valid and "INVALID_COUNTRY_CODE" in (validation_reason or ""):
             result["error_note"] = "Kode negara tidak dikenali atau salah."
-
+        print("tool phone lookup running")
         return result
 
     except Exception as e:
@@ -182,7 +183,7 @@ def wappalyzer(target: str):
             url="target",
             scan_type="full",
         )
-        print(results)
+        print("tool wappalyzer running")
         return results
     except Exception as e:
         return f"error: {str(e)}"
@@ -194,7 +195,7 @@ def pddikti_all(input: str):
     try:
         with api() as client:
             hasil = client.search_all(input)
-            print(hasil)
+            print("tool pddikti_all running")
             return hasil
     except Exception as e:
         return f"error: {str(e)}"
@@ -206,6 +207,7 @@ def search_mhs_by_name_or_nim(name_or_nim: str):
     try:
         with api() as client:
             mahasiswa = client.search_mahasiswa("Ilham Riski Wibowo")
+            print("tool search_mhs_by_name_or_nim running")
             return mahasiswa
     except Exception as e:
         print(f"Error searching mahasiswa: {e}")

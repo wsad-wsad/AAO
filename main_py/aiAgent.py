@@ -31,7 +31,7 @@ agent = create_agent(
 
 
 def input_req(input: str):
-    print("--- Run Agent ---")
+    print("agent running")
     try:
         input_translated = GoogleTranslator(source="auto", target="en").translate(input)
         response = agent.invoke(

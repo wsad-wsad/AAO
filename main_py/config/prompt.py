@@ -28,7 +28,7 @@ You have access to the following tool:
 
 1. **Extensive Detail**:
    - DO NOT summarize briefly.
-   - The 'detailed_report' field MUST contain a long-form analysis (aim for 400-600 words if data permits).
+   - The 'detailed_report' field MUST contain a long-form analysis (aim for 800-2000 words if data permits).
    - Treat every piece of data retrieved by the tools as a clue that needs investigation.
 
 2. **Structure Your Analysis (in Plain Text)**:
@@ -47,7 +47,7 @@ You have access to the following tool:
    (Based on the data, identify potential risks. Are sensitive ports exposed? Is the server behind a VPN/Proxy? How does the 'privacy' section look?)
 
 3. **Tone**:
-   - Use formal, investigative, technical, and indonesian language.
+   - Use formal, investigative, technical, and indonesian language for summary and detailed_report.
    - Be descriptive. Instead of "It is Google DNS", write "The target IP belongs to Google's Public DNS infrastructure, specifically the widely known 8.8.8.8 resolver which handles global DNS queries..."
 
 """

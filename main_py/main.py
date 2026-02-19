@@ -1,17 +1,16 @@
 # from contextlib import asynccontextmanager
 import requests
+from aiAgent import input_req
 
 # from time import sleep
 from fastapi import FastAPI
-from fastapi.middleware.wsgi import WSGIMiddleware
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.wsgi import WSGIMiddleware
 from fastapi.responses import HTMLResponse
 from flask import Flask
-
-from until.response import response
+from flask_cors import CORS  # jangan di hapus ini untuk endpoint allow cors yg flask
 from SU import SUGW, search_web
-from aiAgent import input_req
-
+from until.response import response
 
 # # ini untuk start pas app awal dimulai dan dimatiin
 # @asynccontextmanager
@@ -20,6 +19,8 @@ from aiAgent import input_req
 
 flapp = Flask(__name__)
 fast_app = FastAPI()
+
+CORS(flapp)
 
 fast_app.add_middleware(
     CORSMiddleware,
@@ -47,17 +48,20 @@ def mikir(target):
 async def home():
     return HTMLResponse(home_html)
 
+
 @fast_app.get("/api/SUGW/{target}")
 def search_user(target: str):
     return SUGW(target)
+
 
 @fast_app.get("/api/search-web/{target}")
 def search_web_(target: str):
     return {"result": search_web(target, True)}
 
+
 @fast_app.get("/api/main_go")
 def main_go():
-    return {"msg" : requests.get("http://localhost:8000/")}
+    return {"msg": requests.get("http://localhost:8000/")}
 
 
 @fast_app.get("/api/")
