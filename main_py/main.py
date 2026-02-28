@@ -1,26 +1,31 @@
-# from contextlib import asynccontextmanager
-import requests
-from aiAgent import input_req
+from contextlib import asynccontextmanager
+from psycopg_pool import AsyncConnectionPool
 
 # from time import sleep
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.wsgi import WSGIMiddleware
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, Response
 from flask import Flask
-from flask_cors import CORS  # jangan di hapus ini untuk endpoint allow cors yg flask
-from SU import SUGW, search_web
-from until.response import response
 
-# # ini untuk start pas app awal dimulai dan dimatiin
-# @asynccontextmanager
-# async def lifespan(app: FastAPI):
-#     yield
+from SU import SUGW
+from until.response import ResponseApi
+from aiAgent import input_req
+
+
+with open("/run/secrets/postgres_password", "r") as f:
+    postgres_password = f.read()
+conn_str = f"host=postgres port=5432 dbname=AAO_DB user=my_user password={postgres_password}"
+pool = AsyncConnectionPool(conninfo=conn_str)
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    pool.open()
+    yield
+    pool.close()
 
 flapp = Flask(__name__)
-fast_app = FastAPI()
-
-CORS(flapp)
+fast_app = FastAPI(lifespan=lifespan)
 
 fast_app.add_middleware(
     CORSMiddleware,
@@ -32,40 +37,22 @@ fast_app.add_middleware(
 with open("templates/index.html", "r") as f:
     home_html = f.read()
 
+response = ResponseApi()
 
-@flapp.route("/api/invest/<target>")
+@fast_app.get("/api/invest/{target}")
 def mikir(target):
     try:
         agent = input_req(target)
-
-        return response(200, agent, "success")
-
+        return response(agent)
     except Exception as e:
-        return response(500, str(e), "error")
-
+        return response(str(e), "error on internal server")
 
 @fast_app.get("/")
 async def home():
     return HTMLResponse(home_html)
 
-
-@fast_app.get("/api/SUGW/{target}")
-def search_user(target: str):
-    return SUGW(target)
-
-
-@fast_app.get("/api/search-web/{target}")
-def search_web_(target: str):
-    return {"result": search_web(target, True)}
-
-
-@fast_app.get("/api/main_go")
-def main_go():
-    return {"msg": requests.get("http://localhost:8000/")}
-
-
 @fast_app.get("/api/")
-def health():
+async def health():
     return {"status": "ok"}
 
 

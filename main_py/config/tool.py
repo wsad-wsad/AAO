@@ -180,7 +180,7 @@ def wappalyzer(target: str):
     """
     try:
         results = analyze(
-            url="target",
+            url=target,
             scan_type="full",
         )
         print("tool wappalyzer running")
@@ -206,7 +206,7 @@ def search_mhs_by_name_or_nim(name_or_nim: str):
     """Search for students by name or student ID."""
     try:
         with api() as client:
-            mahasiswa = client.search_mahasiswa("Ilham Riski Wibowo")
+            mahasiswa = client.search_mahasiswa(name_or_nim)
             print("tool search_mhs_by_name_or_nim running")
             return mahasiswa
     except Exception as e:

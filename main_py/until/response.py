@@ -1,25 +1,31 @@
-from datetime import datetime
-from typing import Any
-
+# from datetime import datetime
+from typing import Any, Optional, Required
 
 class ResponseApi:
-    def __init__(self):
-        pass
+    def __call__(self, data: Any, message: Optional[str] = None):        
+        if message == None:
+            return data
+        else:
+            return {
+                "data": data,
+                "message": message
+            }
 
-    def __call__(
-        self, status_code: int = 200, data: Any = None, message: str = "success"
-    ):
-        status = "success" if 200 <= status_code < 300 else "error"
+# class ResponseApi:
+#     def __init__(self):
+#         pass
 
-        response_body = {
-            "status": status,
-            "statusCode": status_code,
-            "message": message,
-            "data": data,
-            "meta": {"timestamp": datetime.now().isoformat(), "version": "1.0"},
-        }
+#     def __call__(
+#         self, status_code: int = 200, data: Any = None, message: str = "success"
+#     ):
+#         status = "success" if 200 <= status_code < 300 else "error"
 
-        return response_body, status_code
+#         response_body = {
+#             "status": status,
+#             "statusCode": status_code,
+#             "message": message,
+#             "data": data,
+#             "meta": {"timestamp": datetime.now().isoformat(), "version": "1.0"},
+#         }
 
-
-response = ResponseApi()
+#         return response_body, status_code

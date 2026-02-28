@@ -17,8 +17,9 @@ COPY --from=builder /app/main_go /app/main_go
 
 WORKDIR /app/main_py
 COPY main_py/requirements.txt .
-RUN pip install -r requirements.txt --no-cache-dir \
-    && playwright install \
+RUN pip install -r requirements.txt --no-cache-dir
+
+RUN playwright install \
     && playwright install-deps
 
 COPY start.sh /app/start.sh

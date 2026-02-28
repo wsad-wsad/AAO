@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>OSINT Agent Terminal | Pro Edition</title>
+        <title>AAO</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link
             href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;600&display=swap"
@@ -98,7 +98,7 @@
                 </div>
                 <div>
                     <h1 class="text-slate-100 font-bold tracking-tight">
-                        OSINT_AGENT_v1.2
+                        OSINT AGENT beta
                     </h1>
                     <div class="flex items-center gap-2">
                         <span class="relative flex h-2 w-2">
@@ -120,14 +120,8 @@
                 class="text-xs font-mono text-slate-500 flex items-center gap-4"
             >
                 <span class="hidden md:inline"
-                    >API_STATUS:
-                    <span class="text-brand-success">OK</span></span
-                >
-                <span
-                    class="bg-slate-800 px-2 py-1 rounded border border-brand-border"
-                    >EN
-                    <i data-feather="repeat" class="inline w-3 h-3"></i>
-                    ID</span
+                    >Server Status:
+                    <span class="text-brand-success">UP</span></span
                 >
             </div>
         </nav>
@@ -148,7 +142,7 @@
                 <div
                     class="bg-brand-surface border border-brand-border p-4 rounded-2xl rounded-tl-none text-sm max-w-prose leading-relaxed shadow-lg"
                 >
-                    Sistem aktif. Masukkan target investigasi.
+                    Masukkan target investigasi beserta informasi yang telah diketahui.
                 </div>
             </div>
         </main>
@@ -163,7 +157,7 @@
                         id="user-input"
                         autocomplete="off"
                         class="w-full bg-brand-surface border border-brand-border rounded-2xl pl-6 pr-16 py-4 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-accent transition-all shadow-2xl"
-                        placeholder="Contoh: indonesia.go.id"
+                        placeholder="Contoh: user, dengan no hp 012345678 dan gender laki-laki"
                     />
                     <button
                         type="submit"

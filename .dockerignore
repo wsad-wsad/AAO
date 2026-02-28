@@ -1,5 +1,6 @@
 # Ignore everything
 *
+__pycache__
 # Allow files and directories
 !/main_go
 !/main_py

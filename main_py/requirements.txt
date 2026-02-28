@@ -1,7 +1,9 @@
 dotenv
 flask
-flask-cors
 fastapi[standard-no-fastapi-cloud-cli]
+psycopg[binary,pool]
+pyjwt
+pwdlib
 
 langchain
 langchain-groq
@@ -11,6 +13,6 @@ deep-translator
 holehe
 phonenumbers
 wappalyzer
-uvicorn
 pddiktipy
 crawl4ai
+python-toon
