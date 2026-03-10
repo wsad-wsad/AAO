@@ -1,0 +1,83 @@
+{
+  "pattern": {
+    "name": "Apple Developer Forum User Profile",
+    "baseSelector": "main.page",
+    "fields": [
+      {
+        "name": "user_identity_name",
+        "selector": ".user-nickname",
+        "type": "text"
+      },
+      {
+        "name": "user_metrics_reputation_points",
+        "selector": "#profile-points-tooltip",
+        "type": "regex",
+        "pattern": "(\\d+)"
+      },
+      {
+        "name": "user_metrics_posts_count",
+        "selector": "#profile-replies-tooltip",
+        "type": "regex",
+        "pattern": "(\\d+)"
+      },
+      {
+        "name": "user_metrics_solved_count",
+        "selector": "#profile-solved-tooltip",
+        "type": "regex",
+        "pattern": "(\\d+)"
+      },
+      {
+        "name": "user_metrics_apple_recommended_count",
+        "selector": "#profile-recommend-tooltip",
+        "type": "regex",
+        "pattern": "(\\d+)"
+      },
+      {
+        "name": "user_metrics_last_seen",
+        "selector": "[data-cy='lastSeen'] + .item-value .postTime",
+        "type": "text"
+      },
+      {
+        "name": "user_metrics_membership_duration",
+        "selector": "[data-cy='memberFor'] + .item-value .postTime",
+        "type": "text"
+      },
+      {
+        "name": "user_metrics_recent_posts",
+        "type": "list",
+        "selector": "article.article-entry",
+        "fields": [
+          {
+            "name": "user_metrics_post_title",
+            "selector": ".post-title span.underline",
+            "type": "text"
+          },
+          {
+            "name": "user_metrics_post_excerpt",
+            "selector": ".excerpt",
+            "type": "text"
+          },
+          {
+            "name": "user_metrics_post_replies",
+            "selector": ".mobile-icon.replies",
+            "type": "text",
+            "transform": "strip"
+          },
+          {
+            "name": "user_metrics_post_views",
+            "selector": ".mobile-icon.views",
+            "type": "text",
+            "transform": "strip"
+          },
+          {
+            "name": "user_metrics_post_date",
+            "selector": ".mobile-icon.timestamp",
+            "type": "text",
+            "transform": "strip"
+          }
+        ]
+      }
+    ]
+  },
+  "web_info": "**Purpose:** The Apple Developer site provides documentation, tools, SDKs, and support for creating software on Apple platforms.  \n\n**Target Audience:** Software developers\u2014both professional and hobbyist\u2014who build apps for iOS, macOS, watchOS, tvOS, and other Apple ecosystems."
+}

@@ -1,0 +1,24 @@
+{
+  "pattern": {
+    "name": "Issuu Publisher Profile",
+    "baseSelector": "section.summary-container",
+    "fields": [
+      {
+        "name": "user_identity_full_name",
+        "selector": "h1.summary-container__title",
+        "type": "text"
+      },
+      {
+        "name": "user_metrics_follower_status",
+        "selector": "button:contains('Follow') span.screen-reader-only",
+        "type": "text"
+      },
+      {
+        "name": "user_metrics_publication_count_status",
+        "selector": ".spinner-footer p",
+        "type": "text"
+      }
+    ]
+  },
+  "web_info": "**Purpose:** Issuu provides a cloud\u2011based platform that lets users upload, convert, and share digital publications (e.g., magazines, catalogs, brochures) as interactive flip\u2011books.  \n\n**Target Audience:** Content creators, publishers, marketers, designers, and businesses that need to distribute visual publications online."
+}

@@ -1,0 +1,21 @@
+{
+  "pattern": {
+    "name": "Strava User Login Data",
+    "baseSelector": "div[data-cy='fdp-container']",
+    "fields": [
+      {
+        "name": "user_identity_email",
+        "selector": "input[data-cy='email']",
+        "type": "attribute",
+        "attribute": "value"
+      },
+      {
+        "name": "user_metrics_remember_me_status",
+        "selector": "input[name='mobile_remember_me']",
+        "type": "attribute",
+        "attribute": "checked"
+      }
+    ]
+  },
+  "web_info": "**Purpose:** Strava is a social fitness platform that lets athletes record, analyze, and share their workouts using GPS data.  \n\n**Target Audience:** It serves active individuals\u2014runners, cyclists, swimmers, and other athletes\u2014who want to track performance and connect with a community of like\u2011minded sports enthusiasts."
+}

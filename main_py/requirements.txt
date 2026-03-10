@@ -1,18 +1,30 @@
 dotenv
+pyjwt
+
 flask
 fastapi[standard-no-fastapi-cloud-cli]
 psycopg[binary,pool]
-pyjwt
-pwdlib
+pymemcache
 
 langchain
 langchain-groq
 langchain-google-genai
 
+nomic[local]
+numpy
+scikit-learn
+
+python-toon
 deep-translator
+
+crawl4ai
+playwright
+
 holehe
 phonenumbers
 wappalyzer
 pddiktipy
-crawl4ai
-python-toon
+
+requests>=2.32
+urllib3>=2.0
+charset-normalizer>=3.0

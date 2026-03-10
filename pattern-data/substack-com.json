@@ -1,0 +1,25 @@
+{
+  "pattern": {
+    "name": "Substack Publication User Data",
+    "baseSelector": "div.intro-popup-page",
+    "baseFields": [],
+    "fields": [
+      {
+        "name": "user_identity_name",
+        "selector": "h1.publication-name",
+        "type": "text"
+      },
+      {
+        "name": "user_metrics_tagline",
+        "selector": "p.publication-tagline",
+        "type": "text"
+      },
+      {
+        "name": "user_metrics_launch_status",
+        "selector": "div.publication-meta",
+        "type": "text"
+      }
+    ]
+  },
+  "web_info": "- Purpose: Dafi\u2019s Substack is a personal newsletter platform where the author shares written content and updates.  \n- Target Audience: Individuals interested in the author\u2019s personal insights and topics, typically a general readership."
+}

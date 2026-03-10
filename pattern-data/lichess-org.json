@@ -1,0 +1,77 @@
+{
+  "pattern": {
+    "name": "Lichess User Profile",
+    "baseSelector": "main.user-show",
+    "fields": [
+      {
+        "name": "user_identity_name",
+        "selector": "h1 .user-link",
+        "type": "text"
+      },
+      {
+        "name": "user_metrics_status",
+        "selector": "h1 .user-link",
+        "type": "attribute",
+        "attribute": "class"
+      },
+      {
+        "name": "user_metrics_member_since",
+        "selector": ".stats p:contains('Member since')",
+        "type": "text"
+      },
+      {
+        "name": "user_metrics_last_active",
+        "selector": ".stats time.set",
+        "type": "text"
+      },
+      {
+        "name": "user_metrics_time_spent_playing",
+        "selector": ".stats p:contains('Time spent playing')",
+        "type": "text"
+      },
+      {
+        "name": "user_metrics_tournament_points",
+        "selector": "a.nm-item[data-toints]",
+        "type": "text"
+      },
+      {
+        "name": "user_metrics_studies_count",
+        "selector": "a.nm-item:contains('studies') strong",
+        "type": "text"
+      },
+      {
+        "name": "user_metrics_forum_posts_count",
+        "selector": "a.nm-item:contains('forum posts') strong",
+        "type": "text"
+      },
+      {
+        "name": "user_metrics_game_count",
+        "selector": ".to-games",
+        "type": "text"
+      },
+      {
+        "name": "user_metrics_ratings",
+        "type": "list",
+        "selector": ".sub-ratings a",
+        "fields": [
+          {
+            "name": "user_metrics_variant_name",
+            "selector": "h3",
+            "type": "text"
+          },
+          {
+            "name": "user_metrics_variant_rating",
+            "selector": "rating strong",
+            "type": "text"
+          },
+          {
+            "name": "user_metrics_variant_game_count",
+            "selector": "rating span",
+            "type": "text"
+          }
+        ]
+      }
+    ]
+  },
+  "web_info": "**Purpose:** Lichess.org is a free, open\u2011source online platform that provides chess playing, training, analysis, and tournament services.  \n\n**Target Audience:** It serves chess enthusiasts of all skill levels worldwide, from beginners to advanced players and coaches."
+}

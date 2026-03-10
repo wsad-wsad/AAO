@@ -1,0 +1,39 @@
+{
+  "pattern": {
+    "name": "User Profile Extraction",
+    "baseSelector": "main[data-slot='sidebar-inset']",
+    "fields": [
+      {
+        "name": "user_identity_full_name",
+        "selector": "h1.text-lg.font-bold",
+        "type": "text"
+      },
+      {
+        "name": "user_identity_name",
+        "selector": "p.text-sm.text-muted-foreground",
+        "type": "text"
+      },
+      {
+        "name": "user_metrics_bio",
+        "selector": "p.text-sm.leading-snug",
+        "type": "text"
+      },
+      {
+        "name": "user_metrics_join_date",
+        "selector": "span.inline-flex.items-center.gap-1.5.text-sm",
+        "type": "text"
+      },
+      {
+        "name": "user_metrics_article_count",
+        "selector": "a[class*='bg-muted text-foreground']",
+        "type": "text"
+      },
+      {
+        "name": "user_metrics_about_status",
+        "selector": "section.lg\\:hidden div.py-3:first-child p",
+        "type": "text"
+      }
+    ]
+  },
+  "web_info": "**Purpose:** Hashnode is an online platform that enables developers and tech professionals to create, publish, and share blog posts about software development and technology topics.  \n\n**Target Audience:** The service is aimed at developers, engineers, tech leaders, and anyone in the software and technology community who wants to write and learn from peer\u2011generated content."
+}

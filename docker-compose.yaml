@@ -3,13 +3,74 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
+    container_name: app
     ports:
       - "8080:8080"
+    networks:
+      - private
+    volumes:
+      - ./main_py:/app/main_py
+      - ./pattern-data:/app/pattern-data
     env_file:
       - ./secrets/.env
+    secrets:
+      - postgres_password
+    depends_on:
+      postgres:
+        condition: service_healthy
+      memcached:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "/app/httpcheck", "http://localhost:8080/api/"]
-      interval: 30s
+      interval: 1m
       timeout: 10s
       retries: 3
       start_period: 10s
+
+  postgres:
+    image: postgres:18.3-alpine3.23
+    container_name: postgres
+    networks:
+      - private
+    environment:
+      - POSTGRES_DB=AAO_DB
+      - POSTGRES_USER=my_user
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+    secrets:
+      - postgres_password
+    volumes:
+      - postgres_data:/var/lib/postgresql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 1m
+      timeout: 15s
+      retries: 3
+      start_period: 15s
+
+  memcached:
+    image: memcached:1.6-alpine
+    container_name: memcached
+    networks:
+      - private
+    environment:
+      - MEMCACHED_MEMORY=64   # set the memory to 64 MB
+    stop_grace_period: 15s
+    healthcheck:
+      test: echo stats | nc localhost 11211
+      interval: 1m
+      timeout: 15s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  postgres_data:
+    name: postgres_db
+
+secrets:
+  postgres_password:
+    file: ./secrets/postgres_password.txt
+
+networks:
+  private:
+    driver: bridge

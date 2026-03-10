@@ -1,0 +1,60 @@
+{
+  "pattern": {
+    "name": "Itch.io User Profile Extraction",
+    "baseSelector": "body.user_layout_widget",
+    "fields": [
+      {
+        "name": "user_identity_name",
+        "selector": "#profile_header h1",
+        "type": "text"
+      },
+      {
+        "name": "user_metrics_games_list",
+        "type": "list",
+        "selector": ".game_cell",
+        "fields": [
+          {
+            "name": "user_metrics_game_id",
+            "selector": "self::*",
+            "type": "attribute",
+            "attribute": "data-game_id"
+          },
+          {
+            "name": "user_metrics_game_title",
+            "selector": ".game_title .title",
+            "type": "text"
+          },
+          {
+            "name": "user_metrics_game_price",
+            "selector": ".price_value",
+            "type": "text"
+          },
+          {
+            "name": "user_metrics_game_description",
+            "selector": ".game_text",
+            "type": "text"
+          },
+          {
+            "name": "user_metrics_game_genre",
+            "selector": ".game_genre",
+            "type": "text"
+          },
+          {
+            "name": "user_metrics_platforms",
+            "type": "list",
+            "selector": ".game_platform .icon",
+            "fields": [
+              {
+                "name": "user_metrics_platform_type",
+                "selector": "self::*",
+                "type": "attribute",
+                "attribute": "class"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "web_info": "- Purpose: The site is the itch.io profile page for the indie developer \u201cdafi,\u201d showcasing and distributing their games such as Blade\u202fDance.  \n- Target Audience: Gamers and players looking for indie, often small\u2011scale titles\u2014particularly those interested in fighting or experimental games."
+}

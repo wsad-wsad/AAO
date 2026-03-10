@@ -1,0 +1,53 @@
+{
+  "pattern": {
+    "name": "Medium User Profile Extraction",
+    "baseSelector": "main",
+    "fields": [
+      {
+        "name": "user_identity_name",
+        "selector": "h1, span[class*='gs gt'], .pw-author-name",
+        "type": "text"
+      },
+      {
+        "name": "user_metrics_reading_lists",
+        "type": "list",
+        "selector": "div[data-testid='readingList']",
+        "fields": [
+          {
+            "name": "user_metrics_list_name",
+            "selector": "h2",
+            "type": "text"
+          },
+          {
+            "name": "user_metrics_story_count",
+            "selector": "p.bb.b.dt.u.ds",
+            "type": "text"
+          }
+        ]
+      },
+      {
+        "name": "user_metrics_following_count",
+        "selector": "a[href*='following']",
+        "type": "text"
+      },
+      {
+        "name": "user_metrics_followers_count",
+        "selector": "a[href*='followers']",
+        "type": "text"
+      },
+      {
+        "name": "user_metrics_following_list",
+        "type": "list",
+        "selector": "ul.hb.gp.e li",
+        "fields": [
+          {
+            "name": "user_identity_full_name",
+            "selector": "p",
+            "type": "text"
+          }
+        ]
+      }
+    ]
+  },
+  "web_info": "**Purpose:** Medium is an online publishing platform that enables anyone to share and discover long\u2011form stories, articles, and ideas.  \n\n**Target Audience:** It serves writers, readers, and creators seeking a space for thoughtful content across a wide range of topics."
+}

@@ -1,2 +1,2 @@
 perlu file:
-- postgres_password yang isinya langsung password
+- postgres_password.txt yang isinya langsung password
